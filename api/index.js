@@ -8,6 +8,7 @@ const jsonWebToken = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
 const multer = require("multer");
+const Place = require("./models/Place.js");
 // for rename file on server using fs
 const fs = require("fs");
 require("dotenv").config();
@@ -27,7 +28,7 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
-console.log(process.env.MONGODB_URL);
+// console.log(process.env.MONGODB_URL);
 // Here connected to mongo db data base
 mongoose
   .connect(process.env.MONGODB_URL, {
@@ -146,6 +147,46 @@ app.post("/uploads", photoMiddleware.array("photos", 100), (req, res) => {
     uploadedFiles.push(newPath.replace(/^uploads\\/, ""));
   }
   res.json(uploadedFiles);
+});
+
+// here added new places
+
+app.post("/places", (req, res) => {
+  const { token } = req.cookies;
+  const {
+    title,
+    address,
+    addedPhotos,
+    description,
+    price,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+  jsonWebToken.verify(
+    token,
+    jsonWebTokenSecret,
+    {},
+    async (error, userData) => {
+      if (error) throw error;
+      const placeDoc = await Place.create({
+        owner: userData.id,
+        title,
+        address,
+        photos: addedPhotos,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+        price,
+      });
+      res.json(placeDoc);
+    }
+  );
 });
 
 app.listen(4000, () => {
