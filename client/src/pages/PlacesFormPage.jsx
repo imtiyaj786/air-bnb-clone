@@ -2,10 +2,12 @@ import { useState } from "react";
 import Perks from "../Perks";
 import PhotosUploader from "../PhotosUploader";
 import axios from "axios";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import AccountNav from "../AccountNav";
 
 export default function PlacesFormPage() {
+  const { id } = useParams();
+  console.log("show id here --> ", id);
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);

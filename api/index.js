@@ -150,7 +150,6 @@ app.post("/uploads", photoMiddleware.array("photos", 100), (req, res) => {
 });
 
 // here added new places
-
 app.post("/places", (req, res) => {
   const { token } = req.cookies;
   const {
@@ -185,6 +184,21 @@ app.post("/places", (req, res) => {
         price,
       });
       res.json(placeDoc);
+    }
+  );
+});
+
+// Here getting added places from dataBase
+
+app.get("/places", (req, res) => {
+  const { token } = req.cookies;
+  jsonWebToken.verify(
+    token,
+    jsonWebTokenSecret,
+    {},
+    async (error, userData) => {
+      const { id } = userData;
+      res.json(await Place.find({ owner: id }));
     }
   );
 });
