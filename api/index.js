@@ -190,7 +190,7 @@ app.post("/places", (req, res) => {
 
 // Here getting added places from dataBase
 
-app.get("/places", (req, res) => {
+app.get("/user-places", (req, res) => {
   const { token } = req.cookies;
   jsonWebToken.verify(
     token,
@@ -251,6 +251,11 @@ app.put("/places", async (req, res) => {
       }
     }
   );
+});
+
+// for showing places on index page
+app.get("/places", async (req, res) => {
+  res.json(await Place.find());
 });
 
 app.listen(4000, () => {

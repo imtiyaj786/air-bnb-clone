@@ -130,7 +130,7 @@ export default function PlacesFormPage() {
         />
 
         {preInput("Check In & Check Out times", "type here")}
-        <div className="grid gap-2 sm:grid-cols-4">
+        <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
           <div>
             <h3 className="mt-2 -mb-1">Check in time</h3>
             <input
