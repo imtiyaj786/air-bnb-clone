@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Perks from "../Perks";
 import PhotosUploader from "../PhotosUploader";
 import axios from "axios";
@@ -20,6 +20,26 @@ export default function PlacesFormPage() {
   const [price, setPrices] = useState(100);
   const [redirect, setRedirect] = useState(false);
 
+  // used for fetch ids
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    axios.get("/places/" + id).then((response) => {
+      const { data } = response;
+      setTitle(data.title);
+      setAddress(data.address);
+      setAddedPhotos(data.photos);
+      setDescription(data.description);
+      setPerks(data.perks);
+      setExtraInfo(data.extraInfo);
+      setCheckIn(data.checkIn);
+      setCheckOut(data.checkOut);
+      setMaxGuests(data.maxGuests);
+      setPrices(data.price);
+    });
+  }, [id]);
+
   function inputHeader(text) {
     return <h2 className="text-1xl mt-4">{text}</h2>;
   }
@@ -36,7 +56,7 @@ export default function PlacesFormPage() {
   }
 
   // passing all new places data
-  async function addNewPlace(ev) {
+  async function savePlace(ev) {
     ev.preventDefault();
     const placeData = {
       title,
@@ -50,8 +70,18 @@ export default function PlacesFormPage() {
       maxGuests,
       price,
     };
-    await axios.post("/places", placeData);
-    setRedirect(true);
+    if (id) {
+      // update
+      await axios.put("/places", {
+        id,
+        ...placeData,
+      });
+      setRedirect(true);
+    } else {
+      // new place
+      await axios.post("/places", placeData);
+      setRedirect(true);
+    }
   }
 
   if (redirect) {
@@ -62,7 +92,7 @@ export default function PlacesFormPage() {
     <div>
       <AccountNav />
       {/* added new places here */}
-      <form onSubmit={addNewPlace}>
+      <form onSubmit={savePlace}>
         {preInput("Title", "Title for your places here")}
         <input
           value={title}

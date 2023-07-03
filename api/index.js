@@ -197,8 +197,58 @@ app.get("/places", (req, res) => {
     jsonWebTokenSecret,
     {},
     async (error, userData) => {
+      if (error) throw error;
       const { id } = userData;
       res.json(await Place.find({ owner: id }));
+    }
+  );
+});
+
+// for existing place
+app.get("/places/:id", async (req, res) => {
+  const { id } = req.params;
+  res.json(await Place.findById(id));
+});
+
+// for update places
+app.put("/places", async (req, res) => {
+  const { token } = req.cookies;
+  const {
+    id,
+    title,
+    address,
+    addedPhotos,
+    description,
+    price,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+  jsonWebToken.verify(
+    token,
+    jsonWebTokenSecret,
+    {},
+    async (error, userData) => {
+      if (error) throw error;
+      const placeDoc = await Place.findById(id);
+      if (userData.id === placeDoc.owner.toString()) {
+        placeDoc.set({
+          title,
+          address,
+          photos: addedPhotos,
+          description,
+          perks,
+          extraInfo,
+          checkIn,
+          checkOut,
+          maxGuests,
+          price,
+        });
+        await placeDoc.save();
+        res.json("ok saved success");
+      }
     }
   );
 });
