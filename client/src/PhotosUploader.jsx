@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import axios from "axios";
 
@@ -52,7 +53,7 @@ export default function PhotosUploader({ addedPhotos, onChange }) {
           value={photoLink}
           onChange={(ev) => setPhotoLink(ev.target.value)}
           type="text"
-          placeholder="Photo upload through links..... jpg"
+          placeholder="Photo upload through links .jpg file"
         />
         <button
           onClick={addPhotoByLink}

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { differenceInCalendarDays, format } from "date-fns";
 
 export default function BookingDates({ booking, className }) {

@@ -12,6 +12,7 @@ const Place = require("./models/Place.js");
 const Booking = require("./models/Booking.js");
 // for rename file on server using fs
 const fs = require("fs");
+
 require("dotenv").config();
 
 app.use(express.json());
@@ -20,17 +21,20 @@ app.use(cookieParser());
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jsonWebTokenSecret = "akfhcjbdhsdbf";
 
-// for access images
+// for access images on uploads folders.
 app.use("/uploads", express.static(__dirname + "/uploads"));
 
+// this end point is used to connect with react js.
 app.use(
   cors({
     credentials: true,
     origin: "http://localhost:5173",
   })
 );
+
 // console.log(process.env.MONGODB_URL);
-// Here connected to mongo db data base
+
+// Here connected Express js to mongo db data base.
 mongoose
   .connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
@@ -43,7 +47,7 @@ mongoose
     console.error("Error connecting to MongoDB:", error);
   });
 
-// this for testing api with both side
+// this for testing api with both side.
 app.get("/test", (req, res) => {
   res.json("test hello ok");
 });
@@ -63,7 +67,7 @@ function getUserDataFromReq(req) {
   });
 }
 
-// this is post request for register
+// This is post request for register user. (used in RegisterPage.jsx)
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   // here create new users
@@ -79,10 +83,9 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// this is post request for login
+// This is post request for login user. (used in LoginPage.jsx)
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
   const userVerifyDoc = await User.findOne({ email });
   if (userVerifyDoc) {
     const passwordMatch = bcrypt.compareSync(password, userVerifyDoc.password);
@@ -111,8 +114,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-//  this is used for profile
-
+//  This is used for login user profile. (used in UserContext.jsx)
 app.get("/profile", (req, res) => {
   const { token } = req.cookies;
   if (token) {
@@ -131,12 +133,12 @@ app.get("/profile", (req, res) => {
   }
 });
 
-// this is for logout
+// This ent point is used for log out user. (used in ProfilePage.jsx)
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json(true);
 });
 
-// for file upload from link
+// This end point is used for upload images by using links. (used in PhotosUploader.jsx)
 app.post("/upload-by-link", async (req, res) => {
   const { link } = req.body;
   // newName is used for uploaded image name
@@ -148,7 +150,7 @@ app.post("/upload-by-link", async (req, res) => {
   res.json(newName);
 });
 
-// direct upload images
+// This end point is used for upload images through computer. (used in API - Uploads folders)
 const photoMiddleware = multer({ dest: "uploads/" });
 app.post("/uploads", photoMiddleware.array("photos", 100), (req, res) => {
   const uploadedFiles = [];
@@ -159,13 +161,12 @@ app.post("/uploads", photoMiddleware.array("photos", 100), (req, res) => {
     const newPath = path + "." + ext;
     // console.log("1 ---> ", newPath.replace(/^uploads\\/, ""));
     fs.renameSync(path, newPath);
-    // uploadedFiles.push(newPath.replace("uploads/", ""));
     uploadedFiles.push(newPath.replace(/^uploads\\/, ""));
   }
   res.json(uploadedFiles);
 });
 
-// here added new places
+// This end point is used for save new places in mongoDB. (used in PlacesFormPage.jsx)
 app.post("/places", (req, res) => {
   const { token } = req.cookies;
   const {
@@ -204,8 +205,7 @@ app.post("/places", (req, res) => {
   );
 });
 
-// Here getting added places from dataBase
-
+// This end point is used for getting added places from mongo DB. (used in PlacesPage.jsx)
 app.get("/user-places", (req, res) => {
   const { token } = req.cookies;
   jsonWebToken.verify(
@@ -220,13 +220,13 @@ app.get("/user-places", (req, res) => {
   );
 });
 
-// for existing place
+// This end point is used to open current places by using their Ids. (used in PlacePage.jsx & PlacesFormPage.jsx)
 app.get("/places/:id", async (req, res) => {
   const { id } = req.params;
   res.json(await Place.findById(id));
 });
 
-// for update places
+// This end point is used for update places. (used in PLaceFormPage.jsx)
 app.put("/places", async (req, res) => {
   const { token } = req.cookies;
   const {
@@ -269,12 +269,12 @@ app.put("/places", async (req, res) => {
   );
 });
 
-// for showing places on index page
+// This end point is used for showing all places on index page. (used in IndexPage.jsx)
 app.get("/places", async (req, res) => {
   res.json(await Place.find());
 });
 
-// for booking post request
+// This end point is used for saved bookings places in Mongo BD. (used in BookingWidget.jsx)
 app.post("/bookings", async (req, res) => {
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
@@ -297,11 +297,14 @@ app.post("/bookings", async (req, res) => {
     });
 });
 
+// This end point is used for getting all booking records into database and showing into react js page.
+// (used in BookingPage.jsx and BookingsPage.jsx)
 app.get("/bookings", async (req, res) => {
   const userData = await getUserDataFromReq(req);
   res.json(await Booking.find({ user: userData.id }).populate("place"));
 });
 
+// This is used for listen APIs on 4000 end point. (used in App.jsx)
 app.listen(4000, () => {
   console.log("listening on port 4000");
 });

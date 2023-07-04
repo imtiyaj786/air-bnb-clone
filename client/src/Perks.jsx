@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 export default function Perks({ selected, onChange }) {
   function handleCheckBoxClick(ev) {
     const { checked, name } = ev.target;

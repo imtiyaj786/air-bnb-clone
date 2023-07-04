@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useContext, useEffect, useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
 import axios from "axios";
@@ -35,7 +36,7 @@ export default function BookingWidget({ place }) {
       name,
       phone,
       place: place._id,
-      price: numberOfGuests * place.price,
+      price: numberOfNights * place.price,
     });
     const bookingId = response.data._id;
     setRedirect(`/account/bookings/${bookingId}`);
