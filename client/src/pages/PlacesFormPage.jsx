@@ -137,7 +137,7 @@ export default function PlacesFormPage() {
               value={checkIn}
               onChange={(ev) => setCheckIn(ev.target.value)}
               type="text"
-              placeholder="14:00"
+              placeholder="12 PM"
             />
           </div>
           <div>
@@ -146,7 +146,7 @@ export default function PlacesFormPage() {
               value={checkOut}
               onChange={(ev) => setCheckOut(ev.target.value)}
               type="text"
-              placeholder="10:00"
+              placeholder="10 AM"
             />
           </div>
           <div>
