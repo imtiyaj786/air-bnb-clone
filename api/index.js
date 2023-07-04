@@ -48,6 +48,21 @@ app.get("/test", (req, res) => {
   res.json("test hello ok");
 });
 
+// for getting user data
+function getUserDataFromReq(req) {
+  return new Promise((resolve, reject) => {
+    jsonWebToken.verify(
+      req.cookies.token,
+      jsonWebTokenSecret,
+      {},
+      async (error, userData) => {
+        if (error) throw error;
+        resolve(userData);
+      }
+    );
+  });
+}
+
 // this is post request for register
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
@@ -261,6 +276,7 @@ app.get("/places", async (req, res) => {
 
 // for booking post request
 app.post("/bookings", async (req, res) => {
+  const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
     req.body;
   Booking.create({
@@ -279,6 +295,11 @@ app.post("/bookings", async (req, res) => {
     .catch((error) => {
       throw error;
     });
+});
+
+app.get("/bookings", async (req, res) => {
+  const userData = await getUserDataFromReq(req);
+  res.json(await Booking.find({ user: userData.id }).populate("place"));
 });
 
 app.listen(4000, () => {
