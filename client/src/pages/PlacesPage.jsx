@@ -13,7 +13,7 @@ export default function PlacesPage() {
     });
   }, []);
   return (
-    <div className="">
+    <div>
       <AccountNav />
       <div className="text-center">
         list of all added places
@@ -39,14 +39,13 @@ export default function PlacesPage() {
           Add New Places
         </Link>
       </div>
-      {/* {action === "new" && <PlacesFormPage />} */}
       <div className="mt-4">
         {places.length > 0 &&
           places.map((place) => (
             <Link
               to={"/account/places/" + place._id}
-              className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl"
-              key={place._id}
+              className="flex mt-2 cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl"
+              key={place}
             >
               <div className="flex m-32 h-32 bg-gray-300 grow shrink-0">
                 <PlaceImg place={place} />

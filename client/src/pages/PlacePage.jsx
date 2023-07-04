@@ -36,9 +36,9 @@ export default function PlacePage() {
             <h2 className="font-semibold text-2xl">Description</h2>
             {place.description}
           </div>
-          Check-in: {place.checkIn}
+          Check-in: {place.checkIn} PM
           <br />
-          Check-out: {place.checkOut}
+          Check-out: {place.checkOut} AM
           <br />
           Max number of guests: {place.maxGuests}
         </div>
