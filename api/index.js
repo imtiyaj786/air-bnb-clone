@@ -9,6 +9,7 @@ const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
 const multer = require("multer");
 const Place = require("./models/Place.js");
+const Booking = require("./models/Booking.js");
 // for rename file on server using fs
 const fs = require("fs");
 require("dotenv").config();
@@ -256,6 +257,28 @@ app.put("/places", async (req, res) => {
 // for showing places on index page
 app.get("/places", async (req, res) => {
   res.json(await Place.find());
+});
+
+// for booking post request
+app.post("/bookings", async (req, res) => {
+  const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
+    req.body;
+  Booking.create({
+    place,
+    checkIn,
+    checkOut,
+    numberOfGuests,
+    name,
+    phone,
+    price,
+    user: userData.id,
+  })
+    .then((doc) => {
+      res.json(doc);
+    })
+    .catch((error) => {
+      throw error;
+    });
 });
 
 app.listen(4000, () => {
